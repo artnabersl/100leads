@@ -130,7 +130,7 @@
         </div>
         
         <div class="form-container">
-            <form method="post" action="https://www.sendsteed.com/subscribe/">
+            <form method="post" action="https://www.sendsteed.com/subscribe/" id="leadForm">
                 <div class="form-group">
                     <input type="email" name="e110385" required placeholder="Enter Your Email Address">
                 </div>
@@ -140,11 +140,79 @@
                 <input type="hidden" name="lllid" value="110385">
                 <input type="hidden" name="lluid" value="sandyarta">
                 <input type="hidden" name="redirect" value="">
-                <input type="hidden" name="source" value="DailyLeadsLandingPage">
+                <input type="hidden" name="source" id="trafficSource" value="">
                 <button type="submit" class="submit-btn">GET INSTANT ACCESS NOW</button>
             </form>
             <div class="guarantee">100% Free • No Credit Card Required • Privacy Protected</div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the form and hidden input field
+            const form = document.getElementById('leadForm');
+            const sourceField = document.getElementById('trafficSource');
+            
+            // Function to get URL parameters
+            function getUrlParameter(name) {
+                name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                const results = regex.exec(location.search);
+                return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            }
+            
+            // Detect traffic source
+            function detectTrafficSource() {
+                // Check for UTM parameters first
+                const utmSource = getUrlParameter('utm_source');
+                if (utmSource) {
+                    return 'UTM: ' + utmSource + 
+                           (getUrlParameter('utm_medium') ? ' / ' + getUrlParameter('utm_medium') : '') + 
+                           (getUrlParameter('utm_campaign') ? ' / ' + getUrlParameter('utm_campaign') : '');
+                }
+                
+                // Check for other common referral sources
+                const referrer = document.referrer;
+                if (!referrer) {
+                    return 'Direct';
+                }
+                
+                try {
+                    const referrerUrl = new URL(referrer);
+                    if (referrerUrl.hostname.includes('facebook.com')) {
+                        return 'Facebook';
+                    } else if (referrerUrl.hostname.includes('twitter.com') || referrerUrl.hostname.includes('x.com')) {
+                        return 'Twitter/X';
+                    } else if (referrerUrl.hostname.includes('linkedin.com')) {
+                        return 'LinkedIn';
+                    } else if (referrerUrl.hostname.includes('instagram.com')) {
+                        return 'Instagram';
+                    } else if (referrerUrl.hostname.includes('google.com')) {
+                        return 'Google Organic';
+                    } else if (referrerUrl.hostname.includes('bing.com')) {
+                        return 'Bing Organic';
+                    } else if (referrerUrl.hostname.includes('yahoo.com')) {
+                        return 'Yahoo Organic';
+                    } else if (referrerUrl.hostname.includes('tiktok.com')) {
+                        return 'TikTok';
+                    } else if (referrerUrl.hostname.includes('youtube.com')) {
+                        return 'YouTube';
+                    } else {
+                        return 'Referral: ' + referrerUrl.hostname;
+                    }
+                } catch (e) {
+                    return 'Referral: Unknown';
+                }
+            }
+            
+            // Set the traffic source when the form is submitted
+            form.addEventListener('submit', function() {
+                sourceField.value = detectTrafficSource();
+            });
+            
+            // Also set it immediately in case the form submission doesn't capture it
+            sourceField.value = detectTrafficSource();
+        });
+    </script>
 </body>
 </html>
